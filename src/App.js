@@ -52,7 +52,7 @@ function App() {
       )}
 
       {/* Test line for verifying the Ancients font */}
-      <p className="ancients">ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+
 
       <div className="challenge">
         <p className="ancients symbol">{cipher[currentLetter]}</p>
