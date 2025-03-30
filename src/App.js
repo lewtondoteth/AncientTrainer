@@ -19,8 +19,12 @@ function App() {
   );
   const [feedback, setFeedback] = useState('');
 
-  const handleGuess = (guess) => {
-    if (guess === currentLetter) {
+   const handleGuess = (guess) => {
+    // If the current letter is U or F, accept either U or F as correct.
+    if ((currentLetter === 'U' || currentLetter === 'F') && (guess === 'U' || guess === 'F')) {
+      setFeedback('✅ Correct!');
+      setCurrentLetter(letters[Math.floor(Math.random() * letters.length)]);
+    } else if (guess === currentLetter) {
       setFeedback('✅ Correct!');
       setCurrentLetter(letters[Math.floor(Math.random() * letters.length)]);
     } else {
@@ -28,9 +32,10 @@ function App() {
     }
   };
 
+
   return (
     <div className="App">
-      <h1>Ancients Alphabet Trainer</h1>
+     
       
       <label className="legend-toggle">
         <input
