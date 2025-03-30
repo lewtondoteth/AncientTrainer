@@ -59,9 +59,34 @@
   white-space: nowrap;
 }
 
-/* Optional mobile tweak */
+
+
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.options button {
+  padding: 0.75rem 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #61dafb;
+  color: #282c34;
+  cursor: pointer;
+  flex: 1 1 60px;  /* allows buttons to grow/shrink */
+  max-width: 60px;
+}
+
+/* Mobile tweaks for smaller screens */
 @media (max-width: 600px) {
-  .legend-item {
+  .options button {
+    padding: 0.5rem 0.75rem;
     font-size: 1rem;
+    max-width: 50px;
   }
 }
