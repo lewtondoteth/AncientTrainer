@@ -1,3 +1,10 @@
+
+
+.ancients {
+  font-family: 'Ancients', sans-serif;
+  font-size: 2.5rem;
+}
+
 .App {
   text-align: center;
 }
@@ -34,5 +41,27 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Legend styles for horizontal layout */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 0.5rem;
+}
+
+.legend-item {
+  font-size: 1.2rem;
+  white-space: nowrap;
+}
+
+/* Optional mobile tweak */
+@media (max-width: 600px) {
+  .legend-item {
+    font-size: 1rem;
   }
 }
