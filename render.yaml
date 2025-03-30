@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: ancienttrainer
+    env: static
+    rootDirectory: .
+    buildCommand: npm run build
+    publishPath: build
