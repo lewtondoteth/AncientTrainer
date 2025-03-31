@@ -1,42 +1,103 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import './App.css';
 
-// Simple A-Z cipher mapping
-const cipher = {
-  A: 'A', B: 'B', C: 'C', D: 'D', E: 'E',
-  F: 'F', G: 'G', H: 'H', I: 'I', J: 'J',
-  K: 'K', L: 'L', M: 'M', N: 'N', O: 'O',
-  P: 'P', Q: 'Q', R: 'R', S: 'S', T: 'T',
-  U: 'U', V: 'V', W: 'W', X: 'X', Y: 'Y', Z: 'Z',
-};
+// Utility function to shuffle an array (Fisher-Yates)
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
-const letters = Object.keys(cipher);
+// Generate random groups: first 5 groups of 4 letters, and 1 group of 6 letters.
+function generateRandomGroups() {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const shuffled = shuffleArray(alphabet);
+  const groups = [];
+  // Five groups of 4 letters each:
+  for (let i = 0; i < 5; i++) {
+    groups.push({
+      label: `Group ${i + 1}`,
+      letters: shuffled.slice(i * 4, i * 4 + 4)
+    });
+  }
+  // One group of 6 letters:
+  groups.push({
+    label: `Group 6`,
+    letters: shuffled.slice(20, 26)
+  });
+  return groups;
+}
 
 function App() {
-  const [showLegend, setShowLegend] = useState(false);
-  const [currentLetter, setCurrentLetter] = useState(
-    letters[Math.floor(Math.random() * letters.length)]
-  );
-  const [feedback, setFeedback] = useState('');
+  // Memoize the groups so they're created once per session.
+  const randomGroups = useMemo(() => generateRandomGroups(), []);
+  const [selectedGroupIndex, setSelectedGroupIndex] = useState(0);
+  const selectedGroup = randomGroups[selectedGroupIndex].letters;
 
-   const handleGuess = (guess) => {
-    // If the current letter is U or F, accept either U or F as correct.
-    if ((currentLetter === 'U' || currentLetter === 'F') && (guess === 'U' || guess === 'F')) {
+  // Helper: pick a random letter from the current group.
+  const getRandomLetter = (group) => group[Math.floor(Math.random() * group.length)];
+
+  const [currentLetter, setCurrentLetter] = useState(getRandomLetter(selectedGroup));
+  // Option order remains stable on a wrong guess; it resets on a correct answer.
+  const [optionOrder, setOptionOrder] = useState([...selectedGroup]);
+  const [feedback, setFeedback] = useState('');
+  // Stores the letter that was selected (for highlighting)
+  const [selectedOption, setSelectedOption] = useState(null);
+  // Flag to indicate if the current guess is correct (for flash effect)
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [showLegend, setShowLegend] = useState(false);
+
+  const handleGuess = (guess) => {
+    if (guess === currentLetter) {
       setFeedback('✅ Correct!');
-      setCurrentLetter(letters[Math.floor(Math.random() * letters.length)]);
-    } else if (guess === currentLetter) {
-      setFeedback('✅ Correct!');
-      setCurrentLetter(letters[Math.floor(Math.random() * letters.length)]);
+      setSelectedOption(guess);
+      setIsCorrect(true);
+      // Wait 1 second before resetting so the flash is visible
+      setTimeout(() => {
+        const newLetter = getRandomLetter(selectedGroup);
+        setCurrentLetter(newLetter);
+        setOptionOrder(shuffleArray(selectedGroup));
+        setFeedback('');
+        setSelectedOption(null);
+        setIsCorrect(false);
+      }, 500);
     } else {
       setFeedback('❌ Try again!');
+      setSelectedOption(guess);
     }
   };
 
+  const handleGroupChange = (groupIndex) => {
+    setSelectedGroupIndex(groupIndex);
+    const newGroup = randomGroups[groupIndex].letters;
+    setCurrentLetter(getRandomLetter(newGroup));
+    setOptionOrder(shuffleArray(newGroup));
+    setFeedback('');
+    setSelectedOption(null);
+    setIsCorrect(false);
+  };
 
   return (
     <div className="App">
-     
+      <h1>Ancients Alphabet Trainer</h1>
       
+      {/* Group Selector */}
+      <div className="group-selector">
+        {randomGroups.map((group, index) => (
+          <button 
+            key={group.label} 
+            onClick={() => handleGroupChange(index)}
+            className={index === selectedGroupIndex ? 'active' : ''}
+          >
+            {group.label}
+          </button>
+        ))}
+      </div>
+      
+      {/* Legend Toggle */}
       <label className="legend-toggle">
         <input
           type="checkbox"
@@ -46,24 +107,34 @@ function App() {
         Show Legend
       </label>
 
+      {/* Legend displayed above the symbol if toggled */}
       {showLegend && (
         <div className="legend">
-          {letters.map((l) => (
+          {selectedGroup.map((l) => (
             <div key={l} className="legend-item">
-              <span className="ancients">{cipher[l]}</span> = {l}
+              <span className="ancients">{l}</span> = {l}
             </div>
           ))}
         </div>
       )}
-
-      {/* Test line for verifying the Ancients font */}
-
-
+      
+      {/* Challenge Section */}
       <div className="challenge">
-        <p className="ancients symbol">{cipher[currentLetter]}</p>
+        {/* When correct, display in normal font; otherwise in the Ancients font */}
+        <p className={`symbol ${isCorrect ? 'normal' : 'ancients'}`}>
+          {currentLetter}
+        </p>
         <div className="options">
-          {letters.map((l) => (
-            <button key={l} onClick={() => handleGuess(l)}>
+          {optionOrder.map((l) => (
+            <button 
+              key={l} 
+              onClick={() => handleGuess(l)}
+              className={
+                selectedOption === l 
+                  ? (isCorrect ? 'correct' : 'wrong') 
+                  : ''
+              }
+            >
               {l}
             </button>
           ))}

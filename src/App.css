@@ -5,6 +5,11 @@
   font-size: 2.5rem;
 }
 
+.normal {
+  font-family: sans-serif;
+  font-size: 1.5rem;
+}
+
 .App {
   text-align: center;
 }
@@ -36,15 +41,43 @@
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* Legend styles for horizontal layout */
+/* Group Selector Styles */
+.group-selector {
+  margin: 1rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.group-selector button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #61dafb;
+  background: white;
+  color: #282c34;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.group-selector button.active {
+  background: #61dafb;
+  color: #282c34;
+}
+
+/* Legend Toggle */
+.legend-toggle {
+  display: block;
+  margin: 1rem 0;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Legend Styles (Horizontal Layout) */
 .legend {
   display: flex;
   flex-wrap: wrap;
@@ -59,9 +92,13 @@
   white-space: nowrap;
 }
 
+@media (max-width: 600px) {
+  .legend-item {
+    font-size: 1rem;
+  }
+}
 
-
-
+/* Options (Letter Buttons) */
 .options {
   display: flex;
   flex-wrap: wrap;
@@ -78,15 +115,35 @@
   background-color: #61dafb;
   color: #282c34;
   cursor: pointer;
-  flex: 1 1 60px;  /* allows buttons to grow/shrink */
+  flex: 1 1 60px;
   max-width: 60px;
+  transition: background-color 0.3s;
 }
 
-/* Mobile tweaks for smaller screens */
+/* Wrong selection highlight */
+.options button.wrong {
+  background-color: red;
+  color: white;
+}
+
+/* Correct selection highlight */
+.options button.correct {
+  background-color: green;
+  color: white;
+}
+
 @media (max-width: 600px) {
   .options button {
     padding: 0.5rem 0.75rem;
     font-size: 1rem;
     max-width: 50px;
   }
+}
+p.symbol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;    /* Adjust as needed */
+  height: 3rem;   /* Adjust as needed */
+  margin: 0 auto; /* Remove extra vertical margins */
 }
